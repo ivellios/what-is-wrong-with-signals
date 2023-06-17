@@ -7,6 +7,7 @@ from .models import ToDo
 
 # Create your tests here.
 
+
 @pytest.mark.django_db
 @mock.patch("django.db.models.signals.pre_save.send")
 def test_saving_todo_dispatches_pre_save_signal(pre_save_send_mock: mock.Mock):

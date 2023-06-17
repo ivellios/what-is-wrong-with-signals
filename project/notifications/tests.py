@@ -8,7 +8,6 @@ from todo.models import ToDo
 # Create your tests here.
 
 
-
 @pytest.mark.django_db
 @mock.patch("logging.Logger.info")
 def test_saving_todo_calls_info(logging_mock: mock.Mock):
