@@ -1,5 +1,8 @@
 from django.db import models
 
+from todo.signals import todo_archived
+
+
 # Create your models here.
 
 
@@ -15,3 +18,9 @@ class ToDo(models.Model):
 
     def __str__(self):
         return self.title
+
+    def archive(self):
+        if self.status == "active":
+            self.status = "archived"
+            self.save()
+            todo_archived.send(sender=self.__class__, instance=self)
