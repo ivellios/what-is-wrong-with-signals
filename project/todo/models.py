@@ -28,5 +28,5 @@ class ToDo(models.Model):
                 data=ToDoData(
                     id=self.pk,
                     title=str(self.title),
-                )
+                ),
             )

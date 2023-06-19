@@ -17,7 +17,6 @@ class SenderMock:
 
 
 class DataSignalTestCase(TestCase):
-
     def test_send_signal_without_data(self):
         # given
         signal = DataSignal(DataMock)
@@ -47,6 +46,9 @@ class DataSignalTestCase(TestCase):
             self.assertEqual(data.required_field, 10)
 
         # when
-        signal.send(self.__class__, DataMock(
-            required_field=10,
-        ))
+        signal.send(
+            self.__class__,
+            DataMock(
+                required_field=10,
+            ),
+        )

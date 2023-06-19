@@ -30,6 +30,7 @@ class DataSignal(Signal):
             print(data.some_field)
 
     """
+
     def __init__(self, data_class: typing.Type, use_caching=False):
         # NOTE: In pre 4.0 Django versions you would need
         #       to add providing_args param also.
