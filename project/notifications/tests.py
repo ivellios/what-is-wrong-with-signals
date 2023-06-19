@@ -16,4 +16,4 @@ def test_archiving_todo_calls_info(logging_mock: mock.Mock):
 
     todo.archive()
 
-    logging_mock.assert_called_with("TODO has been archived")
+    logging_mock.assert_called_with(f"TODO has been archived title=%s", todo.title)

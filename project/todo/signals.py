@@ -1,3 +1,12 @@
-from django.db.models.signals import ModelSignal
+import dataclasses
 
-todo_archived = ModelSignal()
+from datasignals.signals import DataSignal
+
+
+@dataclasses.dataclass
+class ToDoData:
+    id: int
+    title: str
+
+
+todo_archived = DataSignal(ToDoData)

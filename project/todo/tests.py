@@ -2,6 +2,7 @@ from unittest import mock
 
 import pytest
 
+from todo.signals import ToDoData
 from .models import ToDo
 
 
@@ -27,7 +28,7 @@ def test_saving_todo_dispatches_post_save_signal(post_save_send_mock: mock.Mock)
 def test_sending_archive_signal(archived_signal_mock: mock.Mock):
     todo = ToDo.objects.create(title="Some TODO", status="active")
     todo.archive()
-    archived_signal_mock.assert_called_with(sender=ToDo, instance=todo)
+    archived_signal_mock.assert_called_with(sender=ToDo, data=ToDoData(id=todo.pk, title=str(todo.title)))
 
 
 @pytest.mark.django_db
