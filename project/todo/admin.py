@@ -5,7 +5,7 @@ from .models import ToDo
 
 class ToDoAdmin(admin.ModelAdmin):
     list_display = ["title", "status"]
-    actions = ("archive", )
+    actions = ("archive",)
 
     def archive(self, request, queryset):
         for todo in queryset:
