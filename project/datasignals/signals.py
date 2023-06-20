@@ -1,6 +1,10 @@
+import json
 import typing
 
 from django.dispatch import Signal
+from django.dispatch import receiver
+
+from project.celery import app
 
 
 class DataSignal(Signal):
@@ -44,3 +48,49 @@ class DataSignal(Signal):
             )
 
         return super().send(sender, message=message, **named)
+
+
+def celery_signal_receiver(signal, **kwargs):
+    def decorator(func):
+        # @wraps(func)
+        @receiver(signal, **kwargs)
+        def handler(
+            signal=None, sender=None, message: typing.Type = None, *_args, **_kwargs
+        ):
+            message_data = json.dumps(message.__dict__) if message else ""
+            return func.delay(message_data, *_args, **_kwargs)
+
+        return handler
+
+    return decorator
+
+
+def celery_adapter(message_type: typing.Type):
+    def outer(func):
+        def inner(message_data: str, *args, **kwargs):
+            message = message_type(**json.loads(message_data)) if message_data else None
+            return func(sender=None, message=message, *args, **kwargs)
+
+        return inner
+
+    return outer
+
+
+def async_receiver(
+    signal,
+    message_type: typing.Type,
+    celery_task_options: typing.Optional[typing.Dict] = None,
+    **kwargs,
+):
+    if celery_task_options is None:
+        celery_task_options = dict()
+
+    def decorator(func):
+        adapter = celery_adapter(message_type)(func)
+        task = app.task(**celery_task_options)(adapter)
+        celery_signal_receiver(signal, **kwargs)(task)
+        app.register_task(task)
+
+        return func
+
+    return decorator
