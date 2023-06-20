@@ -9,7 +9,7 @@ class DataSignal(Signal):
     Example of defining the signal
 
         @dataclasses.dataclass
-        SomeSignalDataClass:
+        SomeSignalMessage:
             some_field: int
 
         some_signal = DataSignal(SomeSignalDataClass)
@@ -18,7 +18,7 @@ class DataSignal(Signal):
 
         some_signal.send(
             sender=SomeSenderClass,
-            data=SomeSignalDataClass(
+            message=SomeSignalMessage(
                 some_field=5
             )
         )
@@ -26,21 +26,21 @@ class DataSignal(Signal):
     Example of receiving the signal data:
 
         @receiver(some_signal)
-        def handle_some_signal(sender, data: SomeSignalDataClass, **kwargs):
-            print(data.some_field)
+        def handle_some_signal(sender, message: SomeSignalMessage, **kwargs):
+            print(message.some_field)
 
     """
 
-    def __init__(self, data_class: typing.Type, use_caching=False):
+    def __init__(self, message_class: typing.Type, use_caching=False):
         # NOTE: In pre 4.0 Django versions you would need
         #       to add providing_args param also.
         super().__init__(use_caching=use_caching)
-        self.data_class = data_class
+        self.message_class = message_class
 
-    def send(self, sender, data=None, **named):
-        if not isinstance(data, self.data_class):
+    def send(self, sender, message=None, **named):
+        if not isinstance(message, self.message_class):
             raise ValueError(
-                f"Wrong dataclass passed to the signal send: {data.__class__}. Expected {self.data_class}"
+                f"Wrong message dataclass passed to the signal send: {message.__class__}. Expected {self.message_class}"
             )
 
-        return super().send(sender, data=data, **named)
+        return super().send(sender, message=message, **named)

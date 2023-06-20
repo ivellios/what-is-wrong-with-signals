@@ -42,8 +42,8 @@ class DataSignalTestCase(TestCase):
         signal = DataSignal(DataMock)
 
         @receiver(signal)
-        def handle_signal(sender, data: DataMock, **kwargs):
-            self.assertEqual(data.required_field, 10)
+        def handle_signal(sender, message: DataMock, **kwargs):
+            self.assertEqual(message.required_field, 10)
 
         # when
         signal.send(

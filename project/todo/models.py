@@ -1,6 +1,6 @@
 from django.db import models
 
-from todo.signals import todo_archived, ToDoData
+from todo.signals import todo_archived, ToDoMessage
 
 
 # Create your models here.
@@ -25,7 +25,7 @@ class ToDo(models.Model):
             self.save()
             todo_archived.send(
                 sender=self.__class__,
-                data=ToDoData(
+                message=ToDoMessage(
                     id=self.pk,
                     title=str(self.title),
                 ),

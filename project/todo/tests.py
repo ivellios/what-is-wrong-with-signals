@@ -2,7 +2,7 @@ from unittest import mock
 
 import pytest
 
-from todo.signals import ToDoData
+from todo.signals import ToDoMessage
 from .models import ToDo
 
 
@@ -29,7 +29,7 @@ def test_sending_archive_signal(archived_signal_mock: mock.Mock):
     todo = ToDo.objects.create(title="Some TODO", status="active")
     todo.archive()
     archived_signal_mock.assert_called_with(
-        sender=ToDo, data=ToDoData(id=todo.pk, title=str(todo.title))
+        sender=ToDo, message=ToDoMessage(id=todo.pk, title=str(todo.title))
     )
 
 
