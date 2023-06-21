@@ -1,5 +1,6 @@
 import json
 import typing
+from functools import wraps
 
 from django.dispatch import Signal
 from django.dispatch import receiver
@@ -50,47 +51,41 @@ class DataSignal(Signal):
         return super().send(sender, message=message, **named)
 
 
-def celery_signal_receiver(signal, **kwargs):
-    def decorator(func):
-        # @wraps(func)
-        @receiver(signal, **kwargs)
-        def handler(
-            signal=None, sender=None, message: typing.Type = None, *_args, **_kwargs
-        ):
-            message_data = json.dumps(message.__dict__) if message else ""
-            return func.delay(message_data, *_args, **_kwargs)
+def celery_signal_receiver(task, signal, **kwargs):
+    @wraps(task)
+    @receiver(signal, **kwargs)
+    def handler(
+        signal=None, sender=None, message: typing.Type = None, *_args, **_kwargs
+    ):
+        message_data = json.dumps(message.__dict__) if message else ""
+        return task.delay(message_data, *_args, **_kwargs)
 
-        return handler
-
-    return decorator
+    return handler
 
 
-def celery_adapter(message_type: typing.Type):
-    def outer(func):
-        def inner(message_data: str, *args, **kwargs):
-            message = message_type(**json.loads(message_data)) if message_data else None
-            return func(sender=None, message=message, *args, **kwargs)
+def celery_adapter(func, message_type: typing.Type):
+    @wraps(func)
+    def inner(message_data: str, *args, **kwargs):
+        message = message_type(**json.loads(message_data)) if message_data else None
+        return func(sender=None, message=message, *args, **kwargs)
 
-        return inner
-
-    return outer
+    return inner
 
 
 def async_receiver(
     signal,
     message_type: typing.Type,
     celery_task_options: typing.Optional[typing.Dict] = None,
-    **kwargs,
+    **options,
 ):
     if celery_task_options is None:
         celery_task_options = dict()
 
     def decorator(func):
-        adapter = celery_adapter(message_type)(func)
+        adapter = celery_adapter(func, message_type)
         task = app.task(**celery_task_options)(adapter)
-        celery_signal_receiver(signal, **kwargs)(task)
+        celery_signal_receiver(task, signal, **options)
         app.register_task(task)
-
         return func
 
     return decorator
