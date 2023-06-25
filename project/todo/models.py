@@ -1,6 +1,7 @@
 from django.db import models
 
-from todo.signals import todo_archived, ToDoMessage
+from shared.messages import ToDoMessage
+from shared.signals import todo_archived
 
 
 # Create your models here.

@@ -1,4 +1,4 @@
-from datasignals.signals import MessageSignal
+from messagesignals.signals import MessageSignal
 from shared.messages import ToDoMessage
 
 

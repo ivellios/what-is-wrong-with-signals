@@ -2,7 +2,7 @@ from unittest import mock
 
 import pytest
 
-from todo.signals import ToDoMessage
+from shared.messages import ToDoMessage
 from .models import ToDo
 
 
@@ -24,7 +24,7 @@ def test_saving_todo_dispatches_post_save_signal(post_save_send_mock: mock.Mock)
 
 
 @pytest.mark.django_db
-@mock.patch("todo.signals.todo_archived.send")
+@mock.patch("shared.signals.todo_archived.send")
 def test_sending_archive_signal(archived_signal_mock: mock.Mock):
     todo = ToDo.objects.create(title="Some TODO", status="active")
     todo.archive()
@@ -34,7 +34,7 @@ def test_sending_archive_signal(archived_signal_mock: mock.Mock):
 
 
 @pytest.mark.django_db
-@mock.patch("todo.signals.todo_archived.send")
+@mock.patch("shared.signals.todo_archived.send")
 def test_not_sending_archive_signal(archived_signal_mock: mock.Mock):
     todo = ToDo.objects.create(title="Some TODO", status="archived")
     todo.archive()
