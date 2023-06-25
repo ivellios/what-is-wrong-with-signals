@@ -2,7 +2,8 @@ import logging
 
 from django.dispatch import receiver
 
-from todo.signals import todo_archived, ToDoMessage
+from shared.messages import ToDoMessage
+from shared.signals import todo_archived
 
 logger = logging.getLogger(__file__)
 

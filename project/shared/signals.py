@@ -1,12 +1,5 @@
-import dataclasses
-
 from datasignals.signals import MessageSignal
-
-
-@dataclasses.dataclass
-class ToDoMessage:
-    id: int
-    title: str
+from shared.messages import ToDoMessage
 
 
 todo_archived = MessageSignal(ToDoMessage)
