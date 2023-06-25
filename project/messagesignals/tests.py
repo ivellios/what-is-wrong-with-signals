@@ -3,7 +3,7 @@ import dataclasses
 from django.dispatch import receiver
 from django.test import TestCase
 
-from .signals import DataSignal
+from .signals import MessageSignal
 
 
 @dataclasses.dataclass
@@ -16,10 +16,10 @@ class SenderMock:
     pass
 
 
-class DataSignalTestCase(TestCase):
+class MessageSignalTestCase(TestCase):
     def test_send_signal_without_data(self):
         # given
-        signal = DataSignal(DataMock)
+        signal = MessageSignal(DataMock)
 
         # when, then
         with self.assertRaises(ValueError):
@@ -27,7 +27,7 @@ class DataSignalTestCase(TestCase):
 
     def test_send_signal_with_wrong_data_type(self):
         # given
-        signal = DataSignal(DataMock)
+        signal = MessageSignal(DataMock)
 
         @dataclasses.dataclass
         class OtherDataMock:
@@ -39,7 +39,7 @@ class DataSignalTestCase(TestCase):
 
     def test_send_signal_with_proper_data_type(self):
         # given
-        signal = DataSignal(DataMock)
+        signal = MessageSignal(DataMock)
 
         @receiver(signal)
         def handle_signal(sender, message: DataMock, **kwargs):

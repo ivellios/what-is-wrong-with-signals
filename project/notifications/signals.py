@@ -1,7 +1,8 @@
 import logging
 
-from datasignals.signals import async_receiver
-from todo.signals import todo_archived, ToDoMessage
+from messagesignals.signals import async_receiver
+from shared.messages import ToDoMessage
+from shared.signals import todo_archived
 
 logger = logging.getLogger(__file__)
 
