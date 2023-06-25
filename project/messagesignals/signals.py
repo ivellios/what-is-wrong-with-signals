@@ -51,27 +51,6 @@ class MessageSignal(Signal):
         return super().send(sender, message=message, **named)
 
 
-def celery_task_receiver(task, signal, **kwargs):
-    @wraps(task)
-    @receiver(signal, **kwargs)
-    def handler(
-        signal=None, sender=None, message: typing.Type = None, *_args, **_kwargs
-    ):
-        message_data = json.dumps(message.__dict__) if message else ""
-        return task.delay(message_data, *_args, **_kwargs)
-
-    return handler
-
-
-def celery_task_function(func, message_type: typing.Type):
-    @wraps(func)
-    def inner(message_data: str, *args, **kwargs):
-        message = message_type(**json.loads(message_data)) if message_data else None
-        return func(sender=None, message=message, *args, **kwargs)
-
-    return inner
-
-
 def event_receiver(
     signal,
     message_type: typing.Type,
@@ -82,10 +61,21 @@ def event_receiver(
         celery_task_options = dict()
 
     def decorator(func):
-        function = celery_task_function(func, message_type)
-        celery_task = app.task(**celery_task_options)(function)
+        @wraps(func)
+        def deserializing_receiver(message_data: str, *args, **kwargs):
+            message = message_type(**json.loads(message_data)) if message_data else None
+            return func(sender=None, message=message, *args, **kwargs)
+
+        celery_task = app.task(**celery_task_options)(deserializing_receiver)
         app.register_task(celery_task)
-        celery_task_receiver(celery_task, signal, **options)
+
+        @receiver(signal, **options)
+        def handler(
+            signal=None, sender=None, message: typing.Type = None, *_args, **_kwargs
+        ):
+            message_data = json.dumps(message.__dict__) if message else ""
+            return celery_task.delay(message_data, *_args, **_kwargs)
+
         return func
 
     return decorator
