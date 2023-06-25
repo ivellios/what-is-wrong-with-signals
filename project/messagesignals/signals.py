@@ -51,7 +51,7 @@ class MessageSignal(Signal):
         return super().send(sender, message=message, **named)
 
 
-def celery_signal_receiver(task, signal, **kwargs):
+def celery_task_receiver(task, signal, **kwargs):
     @wraps(task)
     @receiver(signal, **kwargs)
     def handler(
@@ -63,7 +63,7 @@ def celery_signal_receiver(task, signal, **kwargs):
     return handler
 
 
-def celery_adapter(func, message_type: typing.Type):
+def celery_task_function(func, message_type: typing.Type):
     @wraps(func)
     def inner(message_data: str, *args, **kwargs):
         message = message_type(**json.loads(message_data)) if message_data else None
@@ -82,10 +82,10 @@ def event_receiver(
         celery_task_options = dict()
 
     def decorator(func):
-        adapter = celery_adapter(func, message_type)
-        task = app.task(**celery_task_options)(adapter)
-        celery_signal_receiver(task, signal, **options)
-        app.register_task(task)
+        function = celery_task_function(func, message_type)
+        celery_task = app.task(**celery_task_options)(function)
+        app.register_task(celery_task)
+        celery_task_receiver(celery_task, signal, **options)
         return func
 
     return decorator
