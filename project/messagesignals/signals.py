@@ -72,7 +72,7 @@ def celery_adapter(func, message_type: typing.Type):
     return inner
 
 
-def async_receiver(
+def event_receiver(
     signal,
     message_type: typing.Type,
     celery_task_options: typing.Optional[typing.Dict] = None,
