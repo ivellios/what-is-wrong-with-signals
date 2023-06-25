@@ -3,7 +3,7 @@ import typing
 from django.dispatch import Signal
 
 
-class DataSignal(Signal):
+class MessageSignal(Signal):
     """
 
     Example of defining the signal
@@ -12,7 +12,7 @@ class DataSignal(Signal):
         SomeSignalMessage:
             some_field: int
 
-        some_signal = DataSignal(SomeSignalDataClass)
+        some_signal = MessageSignal(SomeSignalMessage)
 
     Example of sending the signal:
 

@@ -1,6 +1,6 @@
 import dataclasses
 
-from datasignals.signals import DataSignal
+from datasignals.signals import MessageSignal
 
 
 @dataclasses.dataclass
@@ -9,4 +9,4 @@ class ToDoMessage:
     title: str
 
 
-todo_archived = DataSignal(ToDoMessage)
+todo_archived = MessageSignal(ToDoMessage)
