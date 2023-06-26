@@ -62,19 +62,19 @@ def event_receiver(
 
     def decorator(func):
         @wraps(func)
-        def deserializing_receiver(message_data: str, *args, **kwargs):
+        def consumer_function(message_data: str, *args, **kwargs):
             message = message_type(**json.loads(message_data)) if message_data else None
             return func(sender=None, message=message, *args, **kwargs)
 
-        celery_task = app.task(**celery_task_options)(deserializing_receiver)
-        app.register_task(celery_task)
+        consumer = app.task(**celery_task_options)(consumer_function)
+        app.register_task(consumer)
 
         @receiver(signal, **options)
-        def handler(
+        def producer(
             signal=None, sender=None, message: typing.Type = None, *_args, **_kwargs
         ):
             message_data = json.dumps(message.__dict__) if message else ""
-            return celery_task.delay(message_data, *_args, **_kwargs)
+            return consumer.delay(message_data, *_args, **_kwargs)
 
         return func
 
