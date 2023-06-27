@@ -13,8 +13,7 @@ from todo.models import ToDo
 def test_saving_todo_calls_info(logging_mock: mock.Mock):
     todo = ToDo.objects.create(title="Some todo", status="active")
     logging_mock.reset_mock()
-    todo.status = "archived"
 
-    todo.save()
+    todo.archive()
 
     logging_mock.assert_called_with("TODO has been archived")
