@@ -18,7 +18,7 @@ def handle_todo_pre_save(sender, instance: ToDo, **kwargs):
 
 
 @receiver(post_save, sender=ToDo)
-def handle_todo_pre_save(sender, instance: ToDo, **kwargs):
+def handle_todo_post_save(sender, instance: ToDo, **kwargs):
     logger.info("TODO has been saved...")
     if instance.status == "archived" and instance.pre_save_status == "active":
         logger.info("TODO has been archived")
