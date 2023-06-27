@@ -15,3 +15,7 @@ class ToDo(models.Model):
 
     def __str__(self):
         return self.title
+
+    def archive(self):
+        self.status = "archived"
+        self.save()
