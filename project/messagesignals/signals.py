@@ -52,8 +52,7 @@ class MessageSignal(Signal):
 
 
 def event_receiver(
-    signal,
-    message_type: typing.Type,
+    signal: MessageSignal,
     celery_task_options: typing.Optional[typing.Dict] = None,
     **options,
 ):
@@ -63,7 +62,7 @@ def event_receiver(
     def decorator(func):
         @wraps(func)
         def consumer_function(message_data: str, *args, **kwargs):
-            message = message_type(**json.loads(message_data)) if message_data else None
+            message = signal.message_class(**json.loads(message_data)) if message_data else None
             return func(sender=None, message=message, *args, **kwargs)
 
         consumer = app.task(**celery_task_options)(consumer_function)
