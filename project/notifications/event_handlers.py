@@ -1,6 +1,6 @@
 import logging
 
-from messagesignals.signals import event_receiver
+from event_signals.signals import event_receiver
 from shared.messages import ToDoMessage
 from shared.signals import todo_archived
 
