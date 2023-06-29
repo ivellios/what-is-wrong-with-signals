@@ -8,7 +8,7 @@ from django.dispatch import receiver
 from project.celery import app
 
 
-class MessageSignal(Signal):
+class EventSignal(Signal):
     """
 
     Example of defining the signal
@@ -17,7 +17,7 @@ class MessageSignal(Signal):
         SomeSignalMessage:
             some_field: int
 
-        some_signal = MessageSignal(SomeSignalMessage)
+        some_signal = EventSignal(SomeSignalMessage)
 
     Example of sending the signal:
 
@@ -52,7 +52,7 @@ class MessageSignal(Signal):
 
 
 def event_receiver(
-    signal: MessageSignal,
+    signal: EventSignal,
     celery_task_options: typing.Optional[typing.Dict] = None,
     **options,
 ):
