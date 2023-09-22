@@ -139,3 +139,5 @@ LOGGING = {
         "level": "INFO",
     },
 }
+
+EVENT_SIGNALS_CELERY_APP = "project.celery.app"

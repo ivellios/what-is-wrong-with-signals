@@ -5,3 +5,4 @@ pytest-django==4.5.2
 pytest-watch==4.2.0
 ipython==8.14.0
 ipdb==0.13.13
+celery-signal-receivers==0.1.0
